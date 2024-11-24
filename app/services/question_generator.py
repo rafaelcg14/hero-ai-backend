@@ -20,7 +20,11 @@ def generate_mc_questions(text_chunks):
 
                     genera solo una pregunta de múltiple opciones con una única respuesta correcta.
 
-                    Solo devuelve la pregunta, las opciones y la respuesta correcta.
+                    Solo devuelve la pregunta, las opciones con un índice antecedido 
+                    
+                    (por ejemplo "A)", "B)", "C), "D)") y la respuesta correcta debe ser
+                    
+                    exactamente igual a una de las opciones.
 
                     En caso no puedas generar una pregunta, no devuelvas nada.
                 """

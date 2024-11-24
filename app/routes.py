@@ -20,10 +20,10 @@ async def process_pdf_endpoint(request: ProcessPDFRequest):
     global chatbot
 
     try:
-        questions, chatbot_instance = process_pdf(request.pdf_url)
+        questions, summary, chatbot_instance = process_pdf(request.pdf_url)
         chatbot = chatbot_instance
 
-        return {"questions": questions}
+        return {"questions": questions, "summary": summary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
 

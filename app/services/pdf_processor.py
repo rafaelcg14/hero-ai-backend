@@ -12,6 +12,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 
 from app.services.question_generator import generate_mc_questions
+from app.services.summary_generator import generate_summary_from_topics
 
 def process_pdf(pdf_url: str):
     
@@ -48,12 +49,20 @@ def process_pdf(pdf_url: str):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vector_store = FAISS.from_documents(documents=text_chunks, embedding=embeddings, ids=uuids)
 
-    # Initialize the chatboy
+    # Initialize the chatbot
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(llm, retriever=vector_store.as_retriever(), memory=memory)
 
     # Generate multiple-choice questions
-    questions = generate_mc_questions(text_chunks)
+    generation_results = generate_mc_questions(text_chunks)
+    questions = generation_results["questions"]
 
-    return questions, conversation_chain
+    # Generate a summary of the document considering each topic
+    topics = generation_results["topics"]
+    topics_text = " ".join([topic["topic"] for topic in topics])
+    summary = generate_summary_from_topics(topics_text)
+        
+
+
+    return questions, summary, conversation_chain

@@ -5,6 +5,7 @@ class MCQuestion(BaseModel):
     question: str
     options: List[str]
     correct_answer: str
+    topic: str
 
 class QuestionResponse(BaseModel):
     question_id: str

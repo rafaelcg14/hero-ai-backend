@@ -1,53 +1,53 @@
 # Hero AI Backend
 
-Welcome to the Hero AI Backend repository. This project is part of the Hero AI application, which aims to provide intelligent solutions for various tasks.
-
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [License](#license)
-
-## Introduction
-
-The Hero AI Backend is built to handle the server-side logic and data processing for the Hero AI application. It provides APIs and services to support the frontend application.
+This is the backend for the Hero AI project, built using FastAPI.
 
 ## Features
 
-- RESTful API endpoints
-- Integration with third-party services
+- FastAPI for building APIs quickly and efficiently
+- Asynchronous request handling
+- Automatic interactive API documentation with Swagger UI and ReDoc
+- Easy integration with databases and other services
+
+## Requirements
+
+- Python 3.7+
+- FastAPI
+- Uvicorn
 
 ## Installation
 
-To get started with the Hero AI Backend, follow these steps:
-
 1. Clone the repository:
+
     ```bash
     git clone https://github.com/rafaelcg14/hero-ai-backend.git
-    ```
-2. Navigate to the project directory:
-    ```bash
     cd hero-ai-backend
     ```
 
-## Usage
+2. Create and activate a virtual environment:
 
-To run the backend server locally, use the following command:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+
+3. Install the dependencies:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Running the Application
+
+1. Start the FastAPI server using Uvicorn:
+
+    ```bash
+    uvicorn main:app --reload
+    ```
+
+2. Open your browser and navigate to `http://127.0.0.1:8000` to access the API documentation.
 
 
-The server will start on `http://localhost:8000`.
+## Contact
 
-## Contributing
-
-We welcome contributions to the Hero AI Backend project. To contribute, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Commit your changes and push the branch to your fork.
-4. Create a pull request with a detailed description of your changes.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+For any inquiries, please contact [your-email@example.com].

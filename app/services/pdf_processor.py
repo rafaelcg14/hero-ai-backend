@@ -1,7 +1,10 @@
 import requests
+from io import BytesIO
 from uuid import uuid4
 from dotenv import load_dotenv
+from PyPDF2 import PdfReader
 from langchain_community.document_loaders import PyPDFLoader
+from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
@@ -14,19 +17,24 @@ def process_pdf(pdf_url: str):
     
     load_dotenv()
 
-    # Download PDF
-    temp_file_path = "temp_url.pdf"
+    # Download PDF into memory
     response = requests.get(pdf_url, stream=True)
     if response.status_code != 200:
         raise ValueError("Failed to download the PDF.")
 
-    with open(temp_file_path, "wb") as temp_file:
-        for chunk in response.iter_content(chunk_size=8192):
-            temp_file.write(chunk)
+    pdf_stream = BytesIO()
+    for chunk in response.iter_content(chunk_size=8192):
+        pdf_stream.write(chunk)
     
-    # Extract text from the PDF
-    loader = PyPDFLoader(temp_file_path)
-    docs = loader.load()
+    pdf_stream.seek(0)  # Reset the stream position to the beginning
+
+    # Extract text using PyPDF2
+    pdf_reader = PdfReader(pdf_stream)
+    docs = []
+    for page_num, page in enumerate(pdf_reader.pages):
+        text = page.extract_text()
+        if text:
+            docs.append(Document(page_content=text, metadata={"page": page_num + 1}))
 
     # Split PDF text in chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200, length_function=len)

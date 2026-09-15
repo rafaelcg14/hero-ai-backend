@@ -37,6 +37,17 @@ This is the backend for the Hero AI project, built using FastAPI.
     pip install -r requirements.txt
     ```
 
+## Environment Variables
+
+Create a `.env` file in the project root with:
+
+```
+OPENAI_API_KEY=your-openai-key
+DEEPSEEK_API_KEY=your-deepseek-key
+```
+
+`OPENAI_API_KEY` powers PDF processing, question generation, and the `/chat/` endpoint. `DEEPSEEK_API_KEY` powers `/chat-test/`, a second chat endpoint over the same document context but backed by DeepSeek (`deepseek-reasoner`) instead of OpenAI.
+
 ## Running the Application
 
 1. Start the FastAPI server using Uvicorn:

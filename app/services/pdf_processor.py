@@ -1,3 +1,4 @@
+import os
 import requests
 from io import BytesIO
 from uuid import uuid4
@@ -49,10 +50,26 @@ def process_pdf(pdf_url: str):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vector_store = FAISS.from_documents(documents=text_chunks, embedding=embeddings, ids=uuids)
 
-    # Initialize the chatbot
+    # Initialize the chatbot (OpenAI-backed, used by /chat/)
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(llm, retriever=vector_store.as_retriever(), memory=memory)
+
+    # Initialize a second chatbot chain backed by DeepSeek instead of OpenAI,
+    # used by /chat-test/. Shares the same retriever (same document, same
+    # embeddings) but gets its own memory — sharing a memory object between
+    # two chains would mix each model's turns into one history.
+    # DeepSeek's Chat Completions API is OpenAI-compatible, so this reuses
+    # ChatOpenAI with a different base_url/api_key/model rather than adding
+    # a new SDK dependency.
+    deepseek_llm = ChatOpenAI(
+        model="deepseek-reasoner",
+        temperature=0,
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
+        base_url="https://api.deepseek.com",
+    )
+    deepseek_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    deepseek_chain = ConversationalRetrievalChain.from_llm(deepseek_llm, retriever=vector_store.as_retriever(), memory=deepseek_memory)
 
     # Generate multiple-choice questions
     generation_results = generate_mc_questions(text_chunks)
@@ -65,4 +82,4 @@ def process_pdf(pdf_url: str):
         
 
 
-    return questions, summary, conversation_chain
+    return questions, summary, conversation_chain, deepseek_chain
